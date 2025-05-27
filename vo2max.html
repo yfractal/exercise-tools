@@ -54,14 +54,15 @@
     <div class="method">
         <h3>Cooper 12 分钟跑</h3>
         <div style="margin-bottom:8px;color:#444;">测试方法：在 12 分钟内尽可能地跑得远，根据跑的距离推算最大摄氧量（VO₂max）。</div>
-        公式：
-        <div style="background:#222;color:#fff;padding:18px 10px 10px 10px;border-radius:8px;margin-bottom:10px;text-align:center;">
-
-            <span style="font-size:1.2em;">
-                $$
-                \text{最大摄氧量} = {距离 (公里)} \times 22.351 - 11.2878
-                $$
+        <div style="margin: 32px 0 24px 0;">
+          <div style="margin-bottom:12px;letter-spacing:1px;">公式：</div>
+          <div style="line-height:1.7;">
+            <span id="cooper-mathjax" style="display:inline-block;">
+              $$
+              \text{最大摄氧量} = 22.351 \times \text{距离（千米）} - 11.2878
+              $$
             </span>
+          </div>
         </div>
         <script>
           function calcCooper() {
@@ -73,22 +74,22 @@
               // Convert miles to km if needed
               if(unit === 'mile') distance = distance * 1.60934;
               // Cooper formula
-              let vo2max = distance * 22.351 - 11.2878;
-              vo2max = Math.max(0, vo2max);
+              let VO2max = distance * 22.351 - 11.2878;
+              VO2max = Math.max(0, VO2max);
               // METs
-              let mets = vo2max / 3.5;
+              let mets = VO2max / 3.5;
               // Population average (rough, for demo)
               let popavg = 41.5;
               // Score (as % of pop avg)
-              let score = Math.round((vo2max / popavg) * 100);
+              let score = Math.round((VO2max / popavg) * 100);
               // Rating
               let rating = '一般';
-              if(vo2max >= 60) rating = '优秀';
-              else if(vo2max >= 50) rating = '良好';
-              else if(vo2max >= 40) rating = '一般';
+              if(VO2max >= 60) rating = '优秀';
+              else if(VO2max >= 50) rating = '良好';
+              else if(VO2max >= 40) rating = '一般';
               else rating = '较低';
               // Set outputs
-              document.getElementById('cooper-VO₂max').value = vo2max.toFixed(3);
+              document.getElementById('cooper-VO2max').value = VO2max.toFixed(3);
               document.getElementById('cooper-mets').value = mets.toFixed(3);
               document.getElementById('cooper-popavg').value = popavg;
               document.getElementById('cooper-score').value = score;
@@ -96,7 +97,7 @@
           }
           document.getElementById('cooper-form').addEventListener('reset', function() {
               setTimeout(()=>{
-                  document.getElementById('cooper-VO₂max').value = '';
+                  document.getElementById('cooper-VO2max').value = '';
                   document.getElementById('cooper-mets').value = '';
                   document.getElementById('cooper-popavg').value = '';
                   document.getElementById('cooper-score').value = '';
@@ -119,18 +120,14 @@
                     </label><br><br>
                     <label>
                         <input type="number" id="cooper-distance" value="3.0" step="0.01" min="0" style="width:60px;">
-                        <select id="cooper-unit">
-                            <option value="km">公里</option>
-                            <option value="mile">英里</option>
-                        </select>
-                        距离
+                        距离（千米）
                     </label><br><br>
                     <button type="button" onclick="calcCooper()">计算</button>
                     <button type="reset">重置</button>
                 </div>
                 <div style="flex:1;min-width:180px;">
                     <label><input id="cooper-mets" readonly style="width:80px;background:#ecebe3;"> 代谢当量（METs）</label><br><br>
-                    <label><input id="cooper-VO₂max" readonly style="width:80px;background:#ecebe3;"> 最大摄氧量</label><br><br>
+                    <label><input id="cooper-VO2max" readonly style="width:80px;background:#ecebe3;"> 最大摄氧量</label><br><br>
                     <label><input id="cooper-popavg" readonly style="width:80px;background:#ecebe3;"> 人群平均值</label><br><br>
                     <label><input id="cooper-score" readonly style="width:80px;background:#ecebe3;"> 得分</label><br><br>
                     <label><input id="cooper-rating" readonly style="width:80px;background:#ecebe3;"> 评级</label>
@@ -175,7 +172,7 @@
                 </div>
                 <div style="flex:1;min-width:180px;">
                     <label><input id="rockport-mets" readonly style="width:80px;background:#ecebe3;"> 代谢当量</label><br><br>
-                    <label><input id="rockport-VO₂max" readonly style="width:80px;background:#ecebe3;"> 最大摄氧量</label><br><br>
+                    <label><input id="rockport-VO2max" readonly style="width:80px;background:#ecebe3;"> 最大摄氧量</label><br><br>
                     <label><input id="rockport-popavg" readonly style="width:80px;background:#ecebe3;"> 人群平均值</label><br><br>
                     <label><input id="rockport-score" readonly style="width:80px;background:#ecebe3;"> 得分</label><br><br>
                     <label><input id="rockport-rating" readonly style="width:80px;background:#ecebe3;"> 评级</label>
@@ -192,22 +189,22 @@
             // Sex: male=1, female=0
             let sexVal = (sex === 'male') ? 1 : 0;
             // Rockport formula
-            let VO₂max = 132.853 - (0.0769 * weight) - (0.3877 * age) + (6.315 * sexVal) - (3.2649 * time) - (0.1565 * hr);
-            VO₂max = Math.max(0, VO₂max);
+            let VO2max = 132.853 - (0.0769 * weight) - (0.3877 * age) + (6.315 * sexVal) - (3.2649 * time) - (0.1565 * hr);
+            VO2max = Math.max(0, VO2max);
             // METs
-            let mets = VO₂max / 3.5;
+            let mets = VO2max / 3.5;
             // Population average (same as before)
             let popavg = 41.5;
             // Score (as % of pop avg)
-            let score = Math.round((VO₂max / popavg) * 100);
+            let score = Math.round((VO2max / popavg) * 100);
             // Rating
             let rating = '一般';
-            if(VO₂max >= 60) rating = '优秀';
-            else if(VO₂max >= 50) rating = '良好';
-            else if(VO₂max >= 40) rating = '一般';
+            if(VO2max >= 60) rating = '优秀';
+            else if(VO2max >= 50) rating = '良好';
+            else if(VO2max >= 40) rating = '一般';
             else rating = '较低';
             // Set outputs
-            document.getElementById('rockport-VO₂max').value = VO₂max.toFixed(3);
+            document.getElementById('rockport-VO2max').value = VO2max.toFixed(3);
             document.getElementById('rockport-mets').value = mets.toFixed(3);
             document.getElementById('rockport-popavg').value = popavg;
             document.getElementById('rockport-score').value = score;
@@ -215,7 +212,7 @@
         }
         document.getElementById('rockport-form').addEventListener('reset', function() {
             setTimeout(()=>{
-                document.getElementById('rockport-VO₂max').value = '';
+                document.getElementById('rockport-VO2max').value = '';
                 document.getElementById('rockport-mets').value = '';
                 document.getElementById('rockport-popavg').value = '';
                 document.getElementById('rockport-score').value = '';
@@ -248,7 +245,7 @@
                 </div>
                 <div style="flex:1;min-width:180px;">
                     <label><input id="resthr-mets" readonly style="width:80px;background:#ecebe3;"> 代谢当量</label><br><br>
-                    <label><input id="resthr-VO₂max" readonly style="width:80px;background:#ecebe3;"> 最大摄氧量</label><br><br>
+                    <label><input id="resthr-VO2max" readonly style="width:80px;background:#ecebe3;"> 最大摄氧量</label><br><br>
                     <label><input id="resthr-popavg" readonly style="width:80px;background:#ecebe3;"> 人群平均值</label><br><br>
                     <label><input id="resthr-score" readonly style="width:80px;background:#ecebe3;"> 得分</label><br><br>
                     <label><input id="resthr-rating" readonly style="width:80px;background:#ecebe3;"> 评级</label>
@@ -260,17 +257,17 @@
             let rest = parseFloat(document.getElementById('resthr-rest').value);
             let max = parseFloat(document.getElementById('resthr-max').value);
             if (max === 0) return;
-            let VO₂max = 15.3 * (max / rest);
-            VO₂max = Math.max(0, VO₂max);
-            let mets = VO₂max / 3.5;
+            let VO2max = 15.3 * (max / rest);
+            VO2max = Math.max(0, VO2max);
+            let mets = VO2max / 3.5;
             let popavg = 41.5;
-            let score = Math.round((VO₂max / popavg) * 100);
+            let score = Math.round((VO2max / popavg) * 100);
             let rating = '一般';
-            if(VO₂max >= 60) rating = '优秀';
-            else if(VO₂max >= 50) rating = '良好';
-            else if(VO₂max >= 40) rating = '一般';
+            if(VO2max >= 60) rating = '优秀';
+            else if(VO2max >= 50) rating = '良好';
+            else if(VO2max >= 40) rating = '一般';
             else rating = '较低';
-            document.getElementById('resthr-VO₂max').value = VO₂max.toFixed(3);
+            document.getElementById('resthr-VO2max').value = VO2max.toFixed(3);
             document.getElementById('resthr-mets').value = mets.toFixed(3);
             document.getElementById('resthr-popavg').value = popavg;
             document.getElementById('resthr-score').value = score;
@@ -278,7 +275,7 @@
         }
         document.getElementById('resthr-form').addEventListener('reset', function() {
             setTimeout(()=>{
-                document.getElementById('resthr-VO₂max').value = '';
+                document.getElementById('resthr-VO2max').value = '';
                 document.getElementById('resthr-mets').value = '';
                 document.getElementById('resthr-popavg').value = '';
                 document.getElementById('resthr-score').value = '';
