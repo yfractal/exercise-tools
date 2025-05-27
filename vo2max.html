@@ -65,44 +65,88 @@
           </div>
         </div>
         <script>
+          // VO2max reference table from the images
+          const vo2maxTable = {
+            male: [
+              { min: 20, max: 29, avg: 47.6, sd: 11.3 },
+              { min: 30, max: 39, avg: 43.0, sd: 9.9 },
+              { min: 40, max: 49, avg: 38.8, sd: 9.6 },
+              { min: 50, max: 59, avg: 33.8, sd: 9.1 },
+              { min: 60, max: 69, avg: 29.4, sd: 7.9 },
+              { min: 70, max: 79, avg: 25.8, sd: 7.1 }
+            ],
+            female: [
+              { min: 20, max: 29, avg: 37.6, sd: 10.2 },
+              { min: 30, max: 39, avg: 30.9, sd: 8.0 },
+              { min: 40, max: 49, avg: 27.9, sd: 7.7 },
+              { min: 50, max: 59, avg: 24.2, sd: 6.1 },
+              { min: 60, max: 69, avg: 20.7, sd: 5.0 },
+              { min: 70, max: 79, avg: 18.3, sd: 3.6 }
+            ]
+          };
+
+          function getVO2maxStats(sex, age) {
+            const arr = vo2maxTable[sex] || [];
+            for (const row of arr) {
+              if (age >= row.min && age <= row.max) return row;
+            }
+            // If out of range, use closest
+            if (arr.length > 0) {
+              if (age < arr[0].min) return arr[0];
+              if (age > arr[arr.length-1].max) return arr[arr.length-1];
+            }
+            return { avg: 41.5, sd: 10 };
+          }
+
+          // Standard normal CDF (approximation)
+          function normCdf(z) {
+            return 0.5 * (1 + erf(z / Math.SQRT2));
+          }
+          // Error function approximation
+          function erf(x) {
+            // Abramowitz and Stegun formula 7.1.26
+            const sign = x >= 0 ? 1 : -1;
+            x = Math.abs(x);
+            const a1 =  0.254829592, a2 = -0.284496736, a3 =  1.421413741;
+            const a4 = -1.453152027, a5 =  1.061405429, p  =  0.3275911;
+            const t = 1 / (1 + p * x);
+            const y = 1 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+            return sign * y;
+          }
+
           function calcCooper() {
-              // Get values
-              let distance = parseFloat(document.getElementById('cooper-distance').value);
-              let unit = document.getElementById('cooper-unit').value;
-              let age = parseInt(document.getElementById('cooper-age').value);
-              let sex = document.getElementById('cooper-sex').value;
-              // Convert miles to km if needed
-              if(unit === 'mile') distance = distance * 1.60934;
-              // Cooper formula
-              let VO2max = distance * 22.351 - 11.2878;
-              VO2max = Math.max(0, VO2max);
-              // METs
-              let mets = VO2max / 3.5;
-              // Population average (rough, for demo)
-              let popavg = 41.5;
-              // Score (as % of pop avg)
-              let score = Math.round((VO2max / popavg) * 100);
-              // Rating
-              let rating = '一般';
-              if(VO2max >= 60) rating = '优秀';
-              else if(VO2max >= 50) rating = '良好';
-              else if(VO2max >= 40) rating = '一般';
-              else rating = '较低';
-              // Set outputs
-              document.getElementById('cooper-VO2max').value = VO2max.toFixed(3);
-              document.getElementById('cooper-mets').value = mets.toFixed(3);
-              document.getElementById('cooper-popavg').value = popavg;
-              document.getElementById('cooper-score').value = score;
-              document.getElementById('cooper-rating').value = rating;
+            let distance = parseFloat(document.getElementById('cooper-distance').value);
+            let age = parseInt(document.getElementById('cooper-age').value);
+            let sex = document.getElementById('cooper-sex').value;
+            let VO2max = 22.351 * distance - 11.2878;
+            VO2max = Math.max(0, VO2max);
+            let mets = VO2max / 3.5;
+            let stats = getVO2maxStats(sex, age);
+            let popavg = stats.avg;
+            let sd = stats.sd;
+            // Z-score and percentile
+            let z = (VO2max - popavg) / sd;
+            let percentile = Math.round(normCdf(z) * 100);
+            let score = percentile;
+            let rating = '一般';
+            if(VO2max >= 60) rating = '优秀';
+            else if(VO2max >= 50) rating = '良好';
+            else if(VO2max >= 40) rating = '一般';
+            else rating = '较低';
+            document.getElementById('cooper-VO2max').value = VO2max.toFixed(3);
+            document.getElementById('cooper-mets').value = mets.toFixed(3);
+            document.getElementById('cooper-popavg').value = popavg;
+            document.getElementById('cooper-score').value = score;
+            document.getElementById('cooper-rating').value = rating;
           }
           document.getElementById('cooper-form').addEventListener('reset', function() {
-              setTimeout(()=>{
-                  document.getElementById('cooper-VO2max').value = '';
-                  document.getElementById('cooper-mets').value = '';
-                  document.getElementById('cooper-popavg').value = '';
-                  document.getElementById('cooper-score').value = '';
-                  document.getElementById('cooper-rating').value = '';
-              }, 10);
+            setTimeout(()=>{
+              document.getElementById('cooper-VO2max').value = '';
+              document.getElementById('cooper-mets').value = '';
+              document.getElementById('cooper-popavg').value = '';
+              document.getElementById('cooper-score').value = '';
+              document.getElementById('cooper-rating').value = '';
+            }, 10);
           });
         </script>
         <form id="cooper-form" style="margin-top:20px;">
