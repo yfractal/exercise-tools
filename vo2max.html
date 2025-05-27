@@ -183,13 +183,17 @@
     </div>
 
     <div class="method">
-        <h3>罗克波特一英里步行测试</h3>
-        <div style="background:#222;color:#fff;padding:18px 10px 10px 10px;border-radius:8px;margin-bottom:10px;text-align:center;overflow-x:auto;">
-            <span style="font-size:1.1em;">
-                $$
-                \text{最大摄氧量} = 132.853 - (0.0769 \times \text{体重 (磅)}) - (0.3877 \times \text{年龄 (岁)}) + (6.315 \times \text{性别}) - (3.2649 \times \text{时间 (分钟)}) - (0.1565 \times \text{完成时心率})
-                $$
-            </span>
+        <h3>罗克波特一英里步行测试（Rockport Walking Test）</h3>
+        <div style="margin-bottom:8px;color:#444;">测试方法：在平坦的场地上尽快步行一英里（1.609 公里），记录完成时间和结束时心率，根据下列公式估算最大摄氧量（VO₂max）。</div>
+        <div style="margin: 32px 0 24px 0;">
+          <div style="margin-bottom:12px;letter-spacing:1px;">公式：</div>
+          <div style="line-height:1.7; font-size:1.15em; white-space:normal; overflow-x:auto;">
+              <span style="display:inline-block;">
+                  $$
+                  \text{最大摄氧量} = 132.853 - ( 0.1695\times \text{体重（千克）}) - (0.3877 \times \text{年龄（岁）}) + (6.315 \times \text{性别}) - (3.2649 \times \text{时间（分钟）}) - (0.1565 \times \text{完成时心率})
+                  $$
+              </span>
+          </div>
         </div>
         <form id="rockport-form" style="margin-top:20px;">
             <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start;border:1px solid #ddd;padding:16px;border-radius:6px;">
@@ -205,7 +209,7 @@
                         <input type="number" id="rockport-age" value="30" min="5" max="100" style="width:60px;"> 年龄
                     </label><br><br>
                     <label>
-                        <input type="number" id="rockport-weight" value="150" min="50" max="400" style="width:60px;"> 体重（磅）
+                        <input type="number" id="rockport-weight" value="150" min="50" max="400" style="width:60px;"> 体重（千克）
                     </label><br><br>
                     <label>
                         <input type="number" id="rockport-time" value="15" step="0.01" min="5" max="30" style="width:60px;"> 时间（分钟）
@@ -234,16 +238,19 @@
             let hr = parseInt(document.getElementById('rockport-hr').value);
             // Sex: male=1, female=0
             let sexVal = (sex === 'male') ? 1 : 0;
+            // Convert kg to lbs for formula
+            let weightLbs = weight * 2.20462;
             // Rockport formula
-            let VO2max = 132.853 - (0.0769 * weight) - (0.3877 * age) + (6.315 * sexVal) - (3.2649 * time) - (0.1565 * hr);
+            let VO2max = 132.853 - (0.0769 * weightLbs) - (0.3877 * age) + (6.315 * sexVal) - (3.2649 * time) - (0.1565 * hr);
             VO2max = Math.max(0, VO2max);
-            // METs
             let mets = VO2max / 3.5;
-            // Population average (same as before)
-            let popavg = 41.5;
-            // Score (as % of pop avg)
-            let score = Math.round((VO2max / popavg) * 100);
-            // Rating
+            let stats = getVO2maxStats(sex, age);
+            let popavg = stats.avg;
+            let sd = stats.sd;
+            // Z-score and percentile
+            let z = (VO2max - popavg) / sd;
+            let percentile = Math.round(normCdf(z) * 100);
+            let score = percentile;
             let rating = '';
             if(score <= 20) rating = '较低';
             else if(score <= 40) rating = '一般';
@@ -251,7 +258,6 @@
             else if(score <= 80) rating = '良好';
             else if(score <= 97) rating = '优秀';
             else rating = '顶尖';
-            // Set outputs
             document.getElementById('rockport-VO2max').value = VO2max.toFixed(3);
             document.getElementById('rockport-mets').value = mets.toFixed(3);
             document.getElementById('rockport-popavg').value = popavg;
