@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>最大摄氧量(VO₂max) 测试方法</title>
+    <title>最大摄氧量(VO₂max) </title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -45,14 +45,14 @@
     </style>
 </head>
 <body>
-    <h1>最大摄氧量 (VO₂max) 测试方法</h1>
+    <h1>最大摄氧量 (VO₂max) </h1>
 
     <p>最大摄氧量是指在人体进行最大强度的运动，身体所能摄入的氧气含量。VO₂max 可以极好的预知死亡风险，低健康（VO₂max 在 21-40% 之间的人）的死亡概率是健康人群（VO₂max 在 61-80% 之间）的 1.73 倍，甚至远高于慢行肾病（1.49）、吸烟（1.40）、糖尿病（1.34）[1]。</p>
 
     <h2>测试方法</h2>
 
     <div class="method">
-        <h3>Cooper 12 分钟跑</h3>
+        <h3>Cooper 12 分钟跑（Cooper 12-Minute Run）[2]</h3>
         <div style="margin-bottom:8px;color:#444;">测试方法：在 12 分钟内尽可能地跑得远，根据跑的距离推算最大摄氧量（VO₂max）。</div>
         <div style="margin: 32px 0 24px 0;">
           <div style="margin-bottom:12px;letter-spacing:1px;">公式：</div>
@@ -183,7 +183,7 @@
     </div>
 
     <div class="method">
-        <h3>罗克波特一英里步行测试（Rockport Walking Test）</h3>
+        <h3>罗克波特一英里步行测试（Rockport Walking Test）[3]</h3>
         <div style="margin-bottom:8px;color:#444;">测试方法：在平坦的场地上尽快步行一英里（1.609 公里），记录完成时间和结束时心率，根据下列公式估算最大摄氧量（VO₂max）。</div>
         <div style="margin: 32px 0 24px 0;">
           <div style="margin-bottom:12px;letter-spacing:1px;">公式：</div>
@@ -277,13 +277,17 @@
     </div>
 
     <div class="method">
-        <h3>静息心率估算法</h3>
-        <div style="background:#222;color:#fff;padding:18px 10px 10px 10px;border-radius:8px;margin-bottom:10px;text-align:center;">
-            <span style="font-size:1.1em;">
-                $$
-                \text{最大摄氧量} = 15.3 \times \left(\frac{\text{最大心率}}{\text{静息心率}}\right)
-                $$
+        <h3>静息心率估算法 [4]</h3>
+        <div style="margin-bottom:8px;color:#444;">测试方法：测量清晨醒来时的静息心率和最大心率，根据下列公式估算最大摄氧量（VO₂max）。</div>
+        <div style="margin: 32px 0 24px 0;">
+          <div style="margin-bottom:12px;letter-spacing:1px;">公式：</div>
+          <div style="line-height:1.7; font-size:1.15em; white-space:normal; overflow-x:auto;">
+            <span style="display:inline-block;">
+              $$
+              \text{最大摄氧量} = 15.3 \times \left( \frac{\text{最大心率}}{\text{静息心率}} \right)
+              $$
             </span>
+          </div>
         </div>
         <form id="resthr-form" style="margin-top:20px;">
             <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start;border:1px solid #ddd;padding:16px;border-radius:6px;">
@@ -310,12 +314,19 @@
         function calcRestHR() {
             let rest = parseFloat(document.getElementById('resthr-rest').value);
             let max = parseFloat(document.getElementById('resthr-max').value);
+            let age = parseInt(document.getElementById('cooper-age').value);
+            let sex = document.getElementById('cooper-sex').value;
             if (max === 0) return;
             let VO2max = 15.3 * (max / rest);
             VO2max = Math.max(0, VO2max);
             let mets = VO2max / 3.5;
-            let popavg = 41.5;
-            let score = Math.round((VO2max / popavg) * 100);
+            let stats = getVO2maxStats(sex, age);
+            let popavg = stats.avg;
+            let sd = stats.sd;
+            // Z-score and percentile
+            let z = (VO2max - popavg) / sd;
+            let percentile = Math.round(normCdf(z) * 100);
+            let score = percentile;
             let rating = '';
             if(score <= 20) rating = '较低';
             else if(score <= 40) rating = '一般';
@@ -344,10 +355,13 @@
     <div class="reference">
         <h2>参考</h2>
         <p>[1] Cardiorespiratory Fitness and Mortality Risk Across the Spectra of Age, Race, and Sex</p>
+        <p>[2] <a href="https://zhuanlan.zhihu.com/p/106539690" target="_blank">Cooper 12 分钟 VO2max 测试方法介绍</a></p>
+        <p>[3] Estimation of VO2 Max from a one mile track walk, gender, age, and body weight. </p>
+        <P>[4] Estimation of VO2max from the ratio between HRmax and HRrest--the Heart Rate Ratio Method </P>
     </div>
 
     <!-- MathJax for beautiful math rendering -->
     <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script> 
 </body>
 </html>
