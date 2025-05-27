@@ -59,10 +59,51 @@
 
             <span style="font-size:1.2em;">
                 $$
-                \text{最大摄氧量} = \frac{\text{距离 (公里)} \times 1000 - 504.9}{44.73}
+                \text{最大摄氧量} = {距离 (公里)} \times 22.351 - 11.2878
                 $$
             </span>
         </div>
+        <script>
+          function calcCooper() {
+              // Get values
+              let distance = parseFloat(document.getElementById('cooper-distance').value);
+              let unit = document.getElementById('cooper-unit').value;
+              let age = parseInt(document.getElementById('cooper-age').value);
+              let sex = document.getElementById('cooper-sex').value;
+              // Convert miles to km if needed
+              if(unit === 'mile') distance = distance * 1.60934;
+              // Cooper formula
+              let vo2max = distance * 22.351 - 11.2878;
+              vo2max = Math.max(0, vo2max);
+              // METs
+              let mets = vo2max / 3.5;
+              // Population average (rough, for demo)
+              let popavg = 41.5;
+              // Score (as % of pop avg)
+              let score = Math.round((vo2max / popavg) * 100);
+              // Rating
+              let rating = '一般';
+              if(vo2max >= 60) rating = '优秀';
+              else if(vo2max >= 50) rating = '良好';
+              else if(vo2max >= 40) rating = '一般';
+              else rating = '较低';
+              // Set outputs
+              document.getElementById('cooper-VO₂max').value = vo2max.toFixed(3);
+              document.getElementById('cooper-mets').value = mets.toFixed(3);
+              document.getElementById('cooper-popavg').value = popavg;
+              document.getElementById('cooper-score').value = score;
+              document.getElementById('cooper-rating').value = rating;
+          }
+          document.getElementById('cooper-form').addEventListener('reset', function() {
+              setTimeout(()=>{
+                  document.getElementById('cooper-VO₂max').value = '';
+                  document.getElementById('cooper-mets').value = '';
+                  document.getElementById('cooper-popavg').value = '';
+                  document.getElementById('cooper-score').value = '';
+                  document.getElementById('cooper-rating').value = '';
+              }, 10);
+          });
+        </script>
         <form id="cooper-form" style="margin-top:20px;">
             <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start;border:1px solid #ddd;padding:16px;border-radius:6px;">
                 <div style="flex:1;min-width:220px;">
@@ -96,47 +137,6 @@
                 </div>
             </div>
         </form>
-        <script>
-        function calcCooper() {
-            // Get values
-            let distance = parseFloat(document.getElementById('cooper-distance').value);
-            let unit = document.getElementById('cooper-unit').value;
-            let age = parseInt(document.getElementById('cooper-age').value);
-            let sex = document.getElementById('cooper-sex').value;
-            // Convert miles to km if needed
-            if(unit === 'mile') distance = distance * 1.60934;
-            // Cooper formula
-            let VO₂max = ((distance * 1000) - 504.9) / 44.73;
-            VO₂max = Math.max(0, VO₂max);
-            // METs
-            let mets = VO₂max / 3.5;
-            // Population average (rough, for demo)
-            let popavg = 41.5;
-            // Score (as % of pop avg)
-            let score = Math.round((VO₂max / popavg) * 100);
-            // Rating
-            let rating = '一般';
-            if(VO₂max >= 60) rating = '优秀';
-            else if(VO₂max >= 50) rating = '良好';
-            else if(VO₂max >= 40) rating = '一般';
-            else rating = '较低';
-            // Set outputs
-            document.getElementById('cooper-VO₂max').value = VO₂max.toFixed(3);
-            document.getElementById('cooper-mets').value = mets.toFixed(3);
-            document.getElementById('cooper-popavg').value = popavg;
-            document.getElementById('cooper-score').value = score;
-            document.getElementById('cooper-rating').value = rating;
-        }
-        document.getElementById('cooper-form').addEventListener('reset', function() {
-            setTimeout(()=>{
-                document.getElementById('cooper-VO₂max').value = '';
-                document.getElementById('cooper-mets').value = '';
-                document.getElementById('cooper-popavg').value = '';
-                document.getElementById('cooper-score').value = '';
-                document.getElementById('cooper-rating').value = '';
-            }, 10);
-        });
-        </script>
     </div>
 
     <div class="method">
