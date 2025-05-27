@@ -128,11 +128,13 @@
             let z = (VO2max - popavg) / sd;
             let percentile = Math.round(normCdf(z) * 100);
             let score = percentile;
-            let rating = '一般';
-            if(VO2max >= 60) rating = '优秀';
-            else if(VO2max >= 50) rating = '良好';
-            else if(VO2max >= 40) rating = '一般';
-            else rating = '较低';
+            let rating = '';
+            if(score <= 20) rating = '较低';
+            else if(score <= 40) rating = '一般';
+            else if(score <= 60) rating = '中等';
+            else if(score <= 80) rating = '良好';
+            else if(score <= 97) rating = '优秀';
+            else rating = '顶尖';
             document.getElementById('cooper-VO2max').value = VO2max.toFixed(3);
             document.getElementById('cooper-mets').value = mets.toFixed(3);
             document.getElementById('cooper-popavg').value = popavg;
@@ -242,11 +244,13 @@
             // Score (as % of pop avg)
             let score = Math.round((VO2max / popavg) * 100);
             // Rating
-            let rating = '一般';
-            if(VO2max >= 60) rating = '优秀';
-            else if(VO2max >= 50) rating = '良好';
-            else if(VO2max >= 40) rating = '一般';
-            else rating = '较低';
+            let rating = '';
+            if(score <= 20) rating = '较低';
+            else if(score <= 40) rating = '一般';
+            else if(score <= 60) rating = '中等';
+            else if(score <= 80) rating = '良好';
+            else if(score <= 97) rating = '优秀';
+            else rating = '顶尖';
             // Set outputs
             document.getElementById('rockport-VO2max').value = VO2max.toFixed(3);
             document.getElementById('rockport-mets').value = mets.toFixed(3);
@@ -306,11 +310,13 @@
             let mets = VO2max / 3.5;
             let popavg = 41.5;
             let score = Math.round((VO2max / popavg) * 100);
-            let rating = '一般';
-            if(VO2max >= 60) rating = '优秀';
-            else if(VO2max >= 50) rating = '良好';
-            else if(VO2max >= 40) rating = '一般';
-            else rating = '较低';
+            let rating = '';
+            if(score <= 20) rating = '较低';
+            else if(score <= 40) rating = '一般';
+            else if(score <= 60) rating = '中等';
+            else if(score <= 80) rating = '良好';
+            else if(score <= 97) rating = '优秀';
+            else rating = '顶尖';
             document.getElementById('resthr-VO2max').value = VO2max.toFixed(3);
             document.getElementById('resthr-mets').value = mets.toFixed(3);
             document.getElementById('resthr-popavg').value = popavg;
