@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>6分钟步行测试 (6-Minute Walk Test)</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+        }
+        .method {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .formula {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+        .reference {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            font-size: 0.9em;
+            color: #666;
+        }
+        .notes {
+            background-color: #fff3cd;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+            border-left: 4px solid #ffc107;
+        }
+        .benefits {
+            background-color: #d1ecf1;
+            padding: 15px;
+            border-radius: 6px;
+            margin: 20px 0;
+            border-left: 4px solid #0dcaf0;
+        }
+    </style>
+</head>
+<body>
+    <h1>6分钟步行测试 (6-Minute Walk Test)</h1>
+
+    <p>6分钟步行测试是一种简单、安全、经济的运动能力评估方法，通过测量在6分钟内能够步行的最大距离来估算峰值摄氧量（VO₂peak）。该方法特别适合老年人、慢性病患者以及无法进行高强度运动的人群。</p>
+
+    <h2>测试方法</h2>
+
+    <div class="method">
+        <h3>6分钟步行测试</h3>
+        <div style="margin-bottom:8px;color:#444;">测试方法：在平坦的场地上尽可能快地步行6分钟（不能跑步），记录总距离（米），根据下列公式估算峰值摄氧量（VO₂peak）。</div>
+        <div style="margin: 32px 0 24px 0;">
+          <div style="margin-bottom:12px;letter-spacing:1px;">公式：</div>
+          <div style="line-height:1.7; font-size:1.15em; white-space:normal; overflow-x:auto;">
+            <span style="display:inline-block;">
+              $$
+              \text{VO₂peak (ml/kg/min)} = 0.02 \times \text{距离(m)} - 0.191 \times \text{年龄} - 0.07 \times \text{体重(kg)} + 0.09 \times \text{身高(cm)} + 0.26 \times \text{性别} + 2.45
+              $$
+            </span>
+            <div style="margin-top:8px;font-size:0.9em;color:#666;">（性别：男=1，女=0）</div>
+          </div>
+        </div>
+        <script>
+          // VO2max reference table (same as vo2max.html for percentile calculation)
+          const vo2maxTable = {
+            male: [
+              { min: 20, max: 29, avg: 47.6, sd: 11.3 },
+              { min: 30, max: 39, avg: 43.0, sd: 9.9 },
+              { min: 40, max: 49, avg: 38.8, sd: 9.6 },
+              { min: 50, max: 59, avg: 33.8, sd: 9.1 },
+              { min: 60, max: 69, avg: 29.4, sd: 7.9 },
+              { min: 70, max: 79, avg: 25.8, sd: 7.1 }
+            ],
+            female: [
+              { min: 20, max: 29, avg: 37.6, sd: 10.2 },
+              { min: 30, max: 39, avg: 30.9, sd: 8.0 },
+              { min: 40, max: 49, avg: 27.9, sd: 7.7 },
+              { min: 50, max: 59, avg: 24.2, sd: 6.1 },
+              { min: 60, max: 69, avg: 20.7, sd: 5.0 },
+              { min: 70, max: 79, avg: 18.3, sd: 3.6 }
+            ]
+          };
+
+          function getVO2maxStats(sex, age) {
+            const arr = vo2maxTable[sex] || [];
+            for (const row of arr) {
+              if (age >= row.min && age <= row.max) return row;
+            }
+            // If out of range, use closest
+            if (arr.length > 0) {
+              if (age < arr[0].min) return arr[0];
+              if (age > arr[arr.length-1].max) return arr[arr.length-1];
+            }
+            return { avg: 41.5, sd: 10 };
+          }
+
+          // Standard normal CDF (approximation)
+          function normCdf(z) {
+            return 0.5 * (1 + erf(z / Math.SQRT2));
+          }
+          // Error function approximation
+          function erf(x) {
+            // Abramowitz and Stegun formula 7.1.26
+            const sign = x >= 0 ? 1 : -1;
+            x = Math.abs(x);
+            const a1 =  0.254829592, a2 = -0.284496736, a3 =  1.421413741;
+            const a4 = -1.453152027, a5 =  1.061405429, p  =  0.3275911;
+            const t = 1 / (1 + p * x);
+            const y = 1 - (((((a5 * t + a4) * t) + a3) * t + a2) * t + a1) * t * Math.exp(-x * x);
+            return sign * y;
+          }
+
+          function calc6MinWalk() {
+            let distance = parseFloat(document.getElementById('walk-distance').value);
+            let age = parseInt(document.getElementById('walk-age').value);
+            let weight = parseFloat(document.getElementById('walk-weight').value);
+            let height = parseFloat(document.getElementById('walk-height').value);
+            let sex = document.getElementById('walk-sex').value;
+            // Sex: male=1, female=0
+            let sexVal = (sex === 'male') ? 1 : 0;
+            // 6-minute walk test formula
+            let VO2peak = 0.02 * distance - 0.191 * age - 0.07 * weight + 0.09 * height + 0.26 * sexVal + 2.45;
+            VO2peak = Math.max(0, VO2peak);
+            let mets = VO2peak / 3.5;
+            let stats = getVO2maxStats(sex, age);
+            let popavg = stats.avg;
+            let sd = stats.sd;
+            // Z-score and percentile
+            let z = (VO2peak - popavg) / sd;
+            let percentile = Math.round(normCdf(z) * 100);
+            let score = percentile;
+            let rating = '';
+            if(score <= 20) rating = '较低';
+            else if(score <= 40) rating = '一般';
+            else if(score <= 60) rating = '中等';
+            else if(score <= 80) rating = '良好';
+            else if(score <= 97) rating = '优秀';
+            else rating = '顶尖';
+            document.getElementById('walk-VO2peak').value = VO2peak.toFixed(3);
+            document.getElementById('walk-mets').value = mets.toFixed(3);
+            document.getElementById('walk-popavg').value = popavg;
+            document.getElementById('walk-score').value = score;
+            document.getElementById('walk-rating').value = rating;
+          }
+          document.getElementById('walk-form').addEventListener('reset', function() {
+            setTimeout(()=>{
+              document.getElementById('walk-VO2peak').value = '';
+              document.getElementById('walk-mets').value = '';
+              document.getElementById('walk-popavg').value = '';
+              document.getElementById('walk-score').value = '';
+              document.getElementById('walk-rating').value = '';
+            }, 10);
+          });
+        </script>
+        <form id="walk-form" style="margin-top:20px;">
+            <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start;border:1px solid #ddd;padding:16px;border-radius:6px;">
+                <div style="flex:1;min-width:220px;">
+                    <label>
+                        <select id="walk-sex">
+                            <option value="male">男</option>
+                            <option value="female">女</option>
+                        </select>
+                        性别
+                    </label><br><br>
+                    <label>
+                        <input type="number" id="walk-age" value="30" min="5" max="100" style="width:60px;"> 年龄
+                    </label><br><br>
+                    <label>
+                        <input type="number" id="walk-weight" value="70" min="30" max="200" step="0.1" style="width:60px;"> 体重（千克）
+                    </label><br><br>
+                    <label>
+                        <input type="number" id="walk-height" value="170" min="100" max="250" step="0.1" style="width:60px;"> 身高（厘米）
+                    </label><br><br>
+                    <label>
+                        <input type="number" id="walk-distance" value="500" min="0" step="1" style="width:80px;"> 距离（米）
+                    </label><br><br>
+                    <button type="button" onclick="calc6MinWalk()">计算</button>
+                    <button type="reset">重置</button>
+                </div>
+                <div style="flex:1;min-width:180px;">
+                    <label><input id="walk-mets" readonly style="width:80px;background:#ecebe3;"> 代谢当量（METs）</label><br><br>
+                    <label><input id="walk-VO2peak" readonly style="width:80px;background:#ecebe3;"> 峰值摄氧量</label><br><br>
+                    <label><input id="walk-popavg" readonly style="width:80px;background:#ecebe3;"> 人群平均值</label><br><br>
+                    <label><input id="walk-score" readonly style="width:80px;background:#ecebe3;"> 得分</label><br><br>
+                    <label><input id="walk-rating" readonly style="width:80px;background:#ecebe3;"> 评级</label>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="notes">
+        <h2 style="margin-top:0;">注意事项</h2>
+        <ul style="margin:8px 0 8px 24px;">
+            <li>穿着舒适的衣物和鞋子</li>
+            <li>测试开始前的两小时不要进行剧烈运动</li>
+            <li>开始前可以在椅子上坐十分钟休息</li>
+            <li>中途累了可以休息，但不能停止计时</li>
+            <li>如果重复测试，尽量在一天中的大致相同时间进行</li>
+        </ul>
+    </div>
+
+    <div class="benefits">
+        <h2 style="margin-top:0;">优势</h2>
+        <p>该方法对心血管风险非常友好，中途累了可以休息，但不能停止计时。特别适合老年人、慢性病患者以及无法进行高强度运动的人群。</p>
+    </div>
+
+    <div style="margin:40px 0 32px 0;padding:24px 18px;background:#f6f8fa;border-radius:12px;">
+      <h2 style="margin-bottom:18px;">准确性说明</h2>
+      <div style="font-size:1.08em;color:#333;line-height:1.8;">
+        该方法是对 VO₂max 的估算，操作简单，非常适合老年人。具体准确性可参考：
+        <br><a href="https://pubmed.ncbi.nlm.nih.gov/40148739/" target="_blank">相关研究文献</a>
+      </div>
+    </div>
+
+    <div style="margin:40px 0 32px 0;padding:24px 18px;background:#f6f8fa;border-radius:12px;">
+      <h2 style="margin-bottom:18px;">VO₂peak 评级分档说明</h2>
+      <div style="font-size:1.08em;color:#333;line-height:1.8;">
+        VO₂peak 评级基于同年龄、同性别人群的百分位分布，分为以下六档：
+        <table style="margin:18px 0 12px 0;width:100%;max-width:420px;border-collapse:collapse;font-size:1em;">
+          <thead>
+            <tr style="background:#e6eaf0;">
+              <th style="padding:6px 10px;text-align:left;">评级</th>
+              <th style="padding:6px 10px;text-align:left;">百分位区间</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="padding:6px 10px;">较低</td><td style="padding:6px 10px;">≤20%</td></tr>
+            <tr><td style="padding:6px 10px;">一般</td><td style="padding:6px 10px;">21-40%</td></tr>
+            <tr><td style="padding:6px 10px;">中等</td><td style="padding:6px 10px;">41-60%</td></tr>
+            <tr><td style="padding:6px 10px;">良好</td><td style="padding:6px 10px;">61-80%</td></tr>
+            <tr><td style="padding:6px 10px;">优秀</td><td style="padding:6px 10px;">81-97%</td></tr>
+            <tr><td style="padding:6px 10px;">顶尖</td><td style="padding:6px 10px;">≥98%</td></tr>
+          </tbody>
+        </table>
+        评级分档用于反映您的峰值摄氧量（VO₂peak）在同龄同性别人群中的相对水平。
+      </div>
+    </div>
+
+    <div class="reference">
+        <h2>参考</h2>
+        <p>[1] <a href="https://www.atsjournals.org/doi/full/10.1164/ajrccm.166.1.at1102?role=tab" target="_blank">ATS Statement: Guidelines for the Six-Minute Walk Test</a></p>
+        <p>[2] <a href="https://pubmed.ncbi.nlm.nih.gov/40148739/" target="_blank">Validation of VO₂peak Estimation from 6-Minute Walk Test</a></p>
+    </div>
+
+    <!-- MathJax for beautiful math rendering -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script> 
+</body>
+</html>
