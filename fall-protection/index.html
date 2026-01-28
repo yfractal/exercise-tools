@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>防摔训练练习手册</title>
+    <style>
+        :root {
+            --bg: #ffffff;
+            --surface: #ffffff;
+            --text: #1a1a1a;
+            --muted: #4a4a4a;
+            --muted-2: #6b6b6b;
+            --border: rgba(0, 0, 0, 0.12);
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+            --brand: #2563eb;
+            --brand-2: #1d4ed8;
+            --success: #16a34a;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #0ea5e9;
+
+            --radius-lg: 18px;
+            --radius-md: 14px;
+            --radius-sm: 10px;
+
+            --container: 1160px;
+        }
+
+        * { box-sizing: border-box; }
+        html, body { height: 100%; }
+
+        body {
+            margin: 0;
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+                "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Arial, sans-serif;
+            color: var(--text);
+            background: var(--bg);
+            line-height: 1.65;
+            letter-spacing: 0.1px;
+        }
+
+        .container {
+            max-width: var(--container);
+            margin: 0 auto;
+            padding: 28px 18px 56px;
+        }
+
+        .hero {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            border-radius: var(--radius-lg);
+            padding: 28px 26px;
+            margin-bottom: 18px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero__top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        .hero h1 {
+            margin: 0;
+            font-size: clamp(22px, 3.2vw, 34px);
+            line-height: 1.2;
+            letter-spacing: -0.3px;
+        }
+
+        .hero__subtitle {
+            margin-top: 8px;
+            color: var(--muted);
+            font-size: 15px;
+        }
+
+        .pill {
+            display: inline-flex;
+            gap: 8px;
+            align-items: center;
+            padding: 8px 12px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            background: #f8f9fa;
+            color: var(--muted);
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .content {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            border-radius: var(--radius-lg);
+            padding: 32px 28px;
+            margin-bottom: 18px;
+        }
+
+        .content h2 {
+            margin: 32px 0 16px 0;
+            font-size: 24px;
+            line-height: 1.3;
+            letter-spacing: -0.2px;
+            border-bottom: 2px solid var(--brand);
+            padding-bottom: 8px;
+        }
+
+        .content h2:first-child {
+            margin-top: 0;
+        }
+
+        .content h3 {
+            margin: 24px 0 12px 0;
+            font-size: 18px;
+            line-height: 1.4;
+            color: var(--brand);
+        }
+
+        .content h4 {
+            margin: 20px 0 10px 0;
+            font-size: 16px;
+            line-height: 1.4;
+        }
+
+        .content p {
+            margin: 12px 0;
+            line-height: 1.75;
+        }
+
+        .content ul, .content ol {
+            margin: 12px 0;
+            padding-left: 24px;
+        }
+
+        .content li {
+            margin: 8px 0;
+            line-height: 1.65;
+        }
+
+        .content strong {
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .content code {
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.9em;
+        }
+
+        .content blockquote {
+            margin: 16px 0;
+            padding: 12px 18px;
+            border-left: 4px solid var(--brand);
+            background: #f8f9fa;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .content hr {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 32px 0;
+        }
+
+        .exercises-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            border-radius: var(--radius-lg);
+            padding: 28px 26px;
+            margin-bottom: 18px;
+        }
+
+        .exercises-section h2 {
+            margin: 0 0 18px 0;
+            font-size: 24px;
+            line-height: 1.2;
+            letter-spacing: -0.3px;
+        }
+
+        .exercise-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 14px;
+        }
+
+        .exercise-card {
+            display: block;
+            text-decoration: none;
+            color: var(--text);
+            background: #f8f9fa;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 18px;
+            transition: all 180ms ease;
+        }
+
+        .exercise-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+            border-color: var(--brand);
+        }
+
+        .exercise-card__header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .exercise-card__badge {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            background: linear-gradient(135deg, var(--brand), var(--brand-2));
+            font-size: 16px;
+        }
+
+        .exercise-card__title {
+            margin: 0;
+            font-size: 16px;
+            line-height: 1.3;
+            font-weight: 600;
+        }
+
+        .exercise-card__goal {
+            margin: 0;
+            font-size: 13px;
+            line-height: 1.5;
+            color: var(--muted);
+        }
+
+        .footer {
+            margin-top: 32px;
+            color: var(--muted-2);
+            font-size: 12px;
+            text-align: center;
+        }
+
+        @media print {
+            body { background: white; }
+            .exercises-section, .footer { display: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="hero">
+            <div class="hero__top">
+                <div>
+                    <h1>防摔训练练习手册</h1>
+                    <p class="hero__subtitle">系统的防摔训练指导与练习</p>
+                </div>
+                <div class="pill" id="stats-pill">共 6 个动作</div>
+            </div>
+        </header>
+
+        <main>
+            <article class="content">
+                <h2>1. 为什么要进行防摔训练</h2>
+                <p>一般情况下，在<strong>不进行系统力量训练</strong>的前提下,人的肌肉量和力量通常在<strong>20 多岁到 30 岁左右达到峰值</strong>，之后会随着年龄逐渐下降。随着下降幅度逐渐累积，会影响人的行走、起身、上下楼等基本行动能力，严重时甚至可能导致行动受限或失去独立生活能力。</p>
+                <p>好消息是：<strong>训练可以明显减缓，甚至在一定程度上逆转这一过程</strong>。这也是为什么同样年龄的人，身体状态和行动能力会存在巨大差异。有些长期坚持合理运动的老年人，其力量、平衡和反应能力，甚至可能优于缺乏运动的年轻人。</p>
+                <p>防摔训练的核心目标，并不是"练得多强"，而是<strong>保持足够的力量、控制能力和平衡能力，从而在日常生活中避免跌倒或在失衡时能够稳住身体</strong>。</p>
+
+                <hr>
+
+                <h2>2. 训练的原则</h2>
+
+                <h3>2.1 训练为什么能改善身体情况</h3>
+                <p>训练的本质，是<strong>给身体提供适度的压力</strong>。当身体反复承受这些压力后，会为了更好地适应而发生改变，例如：</p>
+                <ul>
+                    <li>增加或维持肌肉量</li>
+                    <li>提高力量和反应速度</li>
+                    <li>改善神经对身体的控制能力</li>
+                    <li>提高能量利用效率</li>
+                </ul>
+                <p>这些改变不会立刻发生，而是需要<strong>时间的积累</strong>。例如，想看到较为明显的肌肉和力量改善，通常需要 <strong>数周到 3 个月甚至更久</strong>。</p>
+                <p>需要特别强调的是：</p>
+                <ul>
+                    <li><strong>身体需要压力才会改变</strong></li>
+                    <li><strong>压力过大，身体无法恢复，反而会变弱或受伤</strong></li>
+                </ul>
+                <p>因此，运动科学中的一个核心原则是：<strong>渐进超负荷</strong> —— 持续、缓慢地增加训练刺激，而不是一次性给身体过大的负担。训练应当有一定挑战，但<strong>始终应当感觉"可以完成"</strong>。</p>
+                <p>很多人习惯一次练很多、强度很大，但这类训练往往难以长期坚持。而身体的改变，依赖的是<strong>长期、稳定的积累</strong>。短期的大强度训练，如果无法持续，长期意义并不大。</p>
+
+                <hr>
+
+                <h3>2.2 避免受伤是第一前提</h3>
+                <p>任何训练的前提，都是<strong>安全</strong>。</p>
+                <p>在进行任何一个动作前，训练者应当主观上感觉：</p>
+                <ul>
+                    <li>自己能够完成这个动作</li>
+                    <li>动作过程中是可控的</li>
+                </ul>
+                <p>如果感到明显的不安、犹豫，甚至害怕，应当<strong>立即降低难度或停止该动作</strong>。训练中应追求：</p>
+                <blockquote>
+                    <strong>身体听自己的指挥，而不是身体被动作"拖着走"。</strong>
+                </blockquote>
+                <p>受伤不仅会带来疼痛，还会迫使训练中断，打乱整体训练计划。</p>
+
+                <hr>
+
+                <h3>2.3 如何决定是否做一个动作</h3>
+                <ul>
+                    <li>如果对某个动作感到不安，或认为存在受伤风险，应当果断避免该动作，或在专业、有经验的人指导下进行。</li>
+                    <li>尝试新动作时，应当<strong>从最小幅度、最低难度开始</strong>，并尽量配合支撑物或保护措施。</li>
+                </ul>
+                <p>训练是一个长期过程，<strong>安全和坚持，远远比冒险更重要</strong>。</p>
+                <p>同时，要学会区分"正常反应"和"异常信号"：</p>
+                <ul>
+                    <li>轻微的肌肉酸胀或疲劳是正常的</li>
+                    <li>关节、韧带、软组织出现疼痛或不适，通常是不正常的</li>
+                </ul>
+                <p>例如：</p>
+                <ul>
+                    <li>练习腿部动作时，主要感觉应当来自腿部肌肉，而不应集中在手、膝盖、腰部或其他关节</li>
+                </ul>
+
+                <hr>
+
+                <h3>2.4 退阶与进阶</h3>
+                <p><strong>退阶和进阶</strong>是几乎所有训练中都会使用的方法。</p>
+
+                <h4>退阶（降低难度）</h4>
+                <p>当发现某个动作过难、难以控制或感觉不安全时，应当<strong>果断退阶</strong>，例如：</p>
+                <ul>
+                    <li>减少次数或组数</li>
+                    <li>降低重量</li>
+                    <li>缩小动作幅度</li>
+                    <li>使用支撑物（如扶墙、扶椅子）</li>
+                </ul>
+                <p>短时间的退阶是为了更好的进步，要相信自己的身体 -- 经过长期的坚持，一定会变得更好，而不是逞能。</p>
+
+                <h4>进阶（增加难度）</h4>
+                <p>随着训练的持续，身体会逐渐变强，原本有挑战的训练内容可能会变得轻松。当某个动作在当前难度下已经<strong>稳定、轻松完成</strong>时，原有训练对身体的刺激就会减弱，这时才需要考虑进阶。</p>
+                <p>进阶应当：</p>
+                <ul>
+                    <li>在稳定训练 <strong>一到两周以上</strong> 后再考虑</li>
+                    <li>每次只做<strong>小幅度调整</strong>（例如从 5 次增加到 6 次）</li>
+                    <li>如出现不适，应立即退回原有难度</li>
+                </ul>
+                <p>总体原则是：<strong>退阶可以迅速，进阶必须谨慎</strong>。只要在较长时间尺度（例如一个月）内看到进步，就是有效训练。</p>
+
+                <hr>
+
+                <h2>3. 常见问题（Q&A）</h2>
+
+                <h3>3.1 如果平时已经经常运动，还需要防摔训练吗？</h3>
+                <p>需要。</p>
+                <p>大多数人的运动以<strong>有氧运动</strong>（如走路、跑步、骑车）为主，部分人会进行力量训练，但很多力量训练主要集中在<strong>向心收缩</strong>（例如把身体或重量"推起来"）。</p>
+                <p>而在防止跌倒和失衡时，更关键的是<strong>离心能力和控制能力</strong> —— 即在身体被外力拉动时，能否有效减速、稳住和吸收冲击。因此，即使经常运动，也有必要进行针对性的防摔训练。</p>
+
+                <hr>
+
+                <h3>3.2 为什么要区分向心、离心和等长收缩？它们的关系是什么？</h3>
+                <ul>
+                    <li><strong>向心收缩</strong>：肌肉在用力中变短，目的是把身体或负重"推起来"，主要训练的是主动发力和推动能力。</li>
+                    <li><strong>离心收缩</strong>：肌肉在用力中被拉长，目的是减速、刹车和吸收外力，更多强化的是控制能力、肌腱和身体结构的耐受性。</li>
+                    <li><strong>等长收缩</strong>：肌肉用力但长度不变，目的是稳住姿态或力量。</li>
+                </ul>
+                <p>在实际动作中，这三种收缩往往是连续出现、相互配合的。</p>
+                <p>虽然向心训练会让肌肉变粗、力量变大，从而"顺带"提高一点离心能力，但<strong>离心所需要的神经控制方式和身体结构适应，并不会被充分训练到</strong>。就像学会踩油门，并不等于学会踩刹车。</p>
+                <p>因此，<strong>训练向心不等于训练离心</strong>，它们对应的是不同的身体能力，而防摔训练尤其需要重视离心和等长能力。</p>
+            </article>
+
+            <section class="exercises-section">
+                <h2>练习动作</h2>
+                <div class="exercise-grid" id="exercise-list"></div>
+            </section>
+        </main>
+
+        <div class="footer">练习前请仔细阅读上述说明，确保安全训练。</div>
+    </div>
+
+    <script>
+        const exercises = [
+            { id: "1", name: "坐站缓慢下放（最核心、必练）", goal: "建立基础下肢离心刹车能力，直接对应下楼梯、坐下、踩空时的控制需求" },
+            { id: "2", name: "台阶缓慢下踏（下楼梯模拟）", goal: "提升单腿下楼时的离心控制能力，降低踩空和下楼摔倒风险" },
+            { id: "3", name: "靠墙慢蹲（股四头离心耐力）", goal: "提高股四头肌在持续负荷下的离心耐力，增强下肢抗疲劳能力" },
+            { id: "4", name: "单腿坐下（进阶离心控制）", goal: "强化单腿情境下的下肢与核心协同控制，提升高阶防摔能力" },
+            { id: "5", name: "提踵缓慢下放（踝关节离心）", goal: "提升踝关节在滑倒或地面变化时的第一道刹车能力" },
+            { id: "6", name: "分腿蹲慢下放（动态离心）", goal: "训练行走、跨步和转移重心时的动态离心控制能力" }
+        ];
+
+        const exerciseList = document.getElementById('exercise-list');
+        exercises.forEach(ex => {
+            const card = document.createElement('a');
+            card.className = 'exercise-card';
+            card.href = `exercise-${ex.id}.html`;
+            card.innerHTML = `
+                <div class="exercise-card__header">
+                    <div class="exercise-card__badge">${ex.id}</div>
+                    <h3 class="exercise-card__title">${ex.name}</h3>
+                </div>
+                <p class="exercise-card__goal">${ex.goal}</p>
+            `;
+            exerciseList.appendChild(card);
+        });
+    </script>
+</body>
+</html>
